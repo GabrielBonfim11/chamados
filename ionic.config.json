@@ -1,0 +1,7 @@
+{
+  "name": "chamados-front",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
