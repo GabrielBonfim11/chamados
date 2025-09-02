@@ -1,0 +1,43 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa"/>
+  
+  <!-- Computer Monitor -->
+  <rect x="100" y="80" width="200" height="120" rx="8" fill="#2c3e50" stroke="#34495e" stroke-width="2"/>
+  <rect x="110" y="90" width="180" height="100" fill="#ecf0f1"/>
+  
+  <!-- Monitor Stand -->
+  <rect x="180" y="200" width="40" height="20" fill="#2c3e50"/>
+  <rect x="160" y="220" width="80" height="8" rx="4" fill="#2c3e50"/>
+  
+  <!-- Error Screen -->
+  <rect x="120" y="100" width="160" height="80" fill="#e74c3c"/>
+  <text x="200" y="125" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">ERRO DE REDE</text>
+  <text x="200" y="145" text-anchor="middle" fill="white" font-family="Arial" font-size="10">Conexão perdida</text>
+  
+  <!-- Warning Icon -->
+  <circle cx="200" cy="160" r="8" fill="#f39c12"/>
+  <text x="200" y="165" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">!</text>
+  
+  <!-- Network Cable (disconnected) -->
+  <rect x="50" y="140" width="40" height="8" rx="4" fill="#95a5a6"/>
+  <rect x="310" y="140" width="40" height="8" rx="4" fill="#95a5a6"/>
+  
+  <!-- Disconnection indicators -->
+  <path d="M90 144 L110 144" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M290 144 L310 144" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- WiFi symbol with X -->
+  <g transform="translate(200, 50)">
+    <path d="M-20 0 Q-20 -15 0 -15 Q20 -15 20 0" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+    <path d="M-15 -5 Q-15 -12 0 -12 Q15 -12 15 -5" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+    <path d="M-10 -8 Q-10 -10 0 -10 Q10 -10 10 -8" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+    <circle cx="0" cy="-5" r="2" fill="#bdc3c7"/>
+    <!-- X mark -->
+    <path d="M-8 -18 L8 -2" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+    <path d="M8 -18 L-8 -2" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="200" y="30" text-anchor="middle" fill="#2c3e50" font-family="Arial" font-size="16" font-weight="bold">Problema de Conectividade</text>
+</svg>

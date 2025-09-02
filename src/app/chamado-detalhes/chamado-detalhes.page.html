@@ -1,0 +1,189 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/chamados" text="" icon="chevron-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Detalhes do Chamado</ion-title>
+    <ion-buttons slot="end">
+      <ion-button style="visibility: hidden">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="chamado-detalhes-container" *ngIf="chamado">
+    <!-- Cabeçalho do chamado -->
+    <ion-card class="chamado-header-card">
+      <ion-card-header>
+        <div class="chamado-titulo-container">
+          <ion-card-title>{{ chamado.titulo }}</ion-card-title>
+          <ion-badge [color]="getStatusColor(chamado.status)" class="status-badge">
+            {{ statusLabels[chamado.status] }}
+          </ion-badge>
+        </div>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <!-- Informações principais -->
+        <div class="info-section">
+          <div class="info-item">
+            <ion-icon name="person-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Solicitante</ion-label>
+              <ion-text>{{ chamado.solicitante }}</ion-text>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <ion-icon name="location-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Local</ion-label>
+              <ion-text>{{ chamado.local }}</ion-text>
+            </div>
+          </div>
+          
+          <div class="info-item" *ngIf="chamado.contato">
+            <ion-icon [name]="chamado.contato.includes('@') ? 'mail-outline' : 'call-outline'" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Contato</ion-label>
+              <ion-text>{{ chamado.contato }}</ion-text>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <ion-icon name="time-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Data de Abertura</ion-label>
+              <ion-text>{{ chamado.data }}</ion-text>
+            </div>
+          </div>
+          
+          <div class="info-item" *ngIf="chamado.dataEncerramento">
+            <ion-icon name="time-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Data de Encerramento</ion-label>
+              <ion-text>{{ chamado.dataEncerramento }}</ion-text>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <ion-icon name="alert-circle-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Prioridade</ion-label>
+              <ion-badge [color]="getPrioridadeColor(chamado.prioridade)" class="prioridade-badge">
+                {{ chamado.prioridade }}
+              </ion-badge>
+            </div>
+          </div>
+          
+          <div class="info-item" *ngIf="chamado.categoria">
+            <ion-icon name="folder-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <ion-label class="info-label">Categoria</ion-label>
+              <ion-text>{{ chamado.categoria }}</ion-text>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Descrição detalhada -->
+        <div class="descricao-section">
+          <ion-label class="section-title">Descrição</ion-label>
+          <p class="descricao-text">{{ chamado.descricao }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    
+    <!-- Anexos -->
+    <ion-card *ngIf="chamado.anexos && chamado.anexos.length > 0" class="anexos-card">
+      <ion-card-header>
+        <ion-label class="section-title">Anexos</ion-label>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="anexos-container">
+          <div *ngFor="let anexo of chamado.anexos" class="anexo-item">
+            <div *ngIf="anexo.tipo === 'imagem'" class="anexo-imagem">
+              <img [src]="anexo.url" [alt]="anexo.nome" />
+              <span class="anexo-nome">{{ anexo.nome }}</span>
+            </div>
+            <div *ngIf="anexo.tipo === 'video'" class="anexo-video">
+              <ion-button fill="clear" color="primary">
+                <ion-icon name="videocam-outline" slot="start"></ion-icon>
+                {{ anexo.nome }}
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    
+    <!-- Comentários -->
+    <ion-card class="comentarios-card">
+      <ion-card-header>
+        <ion-label class="section-title">Comentários</ion-label>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="comentarios-container">
+          <div *ngIf="chamado.comentarios && chamado.comentarios.length > 0" class="comentarios-list">
+            <div *ngFor="let comentario of chamado.comentarios" class="comentario-item">
+              <div class="comentario-header">
+                <div class="comentario-autor">{{ comentario.autor }}</div>
+                <div class="comentario-data">{{ comentario.data }}</div>
+              </div>
+              <div class="comentario-texto">{{ comentario.texto }}</div>
+            </div>
+          </div>
+          
+          <div *ngIf="!chamado.comentarios || chamado.comentarios.length === 0" class="sem-comentarios">
+            <p>Nenhum comentário ainda.</p>
+          </div>
+          
+          <!-- Adicionar novo comentário -->
+          <div class="novo-comentario">
+            <ion-textarea 
+              [(ngModel)]="novoComentario" 
+              placeholder="Adicione um comentário..."
+              rows="3"
+              class="comentario-input">
+            </ion-textarea>
+            <ion-button 
+              expand="block" 
+              color="primary" 
+              [disabled]="!novoComentario.trim()"
+              (click)="adicionarComentario()">
+              <ion-icon name="send-outline" slot="start"></ion-icon>
+              Enviar
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    
+    <!-- Alterar status -->
+    <ion-card class="status-card">
+      <ion-card-header>
+        <ion-label class="section-title">Alterar Status</ion-label>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-select 
+          [value]="chamado.status" 
+          (ionChange)="atualizarStatus($event)"
+          interface="action-sheet"
+          placeholder="Selecione o status">
+          <ion-select-option *ngFor="let option of statusOptions" [value]="option">
+            {{ statusLabels[option] }}
+          </ion-select-option>
+        </ion-select>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  
+  <!-- Mensagem de carregamento ou erro -->
+  <div class="loading-container" *ngIf="!chamado">
+    <ion-text color="medium">Carregando detalhes do chamado...</ion-text>
+  </div>
+</ion-content>

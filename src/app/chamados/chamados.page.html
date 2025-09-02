@@ -1,31 +1,46 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/login" text="" icon="chevron-back-outline"></ion-back-button>
     </ion-buttons>
-    <ion-title>Chamados</ion-title>
+    <ion-title class="ion-text-center">{{ getTabTitle() }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button style="visibility: hidden">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navegarParaCriarChamado()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
   <ion-tabs>
     <!-- Conteúdo das tabs -->
     <ion-tab tab="abertos">
       <div class="chamados-container">
-        <div class="chamados-header">
-          <h2>Chamados Abertos</h2>
-        </div>
         <div class="chamados-list">
           <div class="chamado-card" *ngFor="let chamado of getChamadosAbertos()">
             <div class="chamado-header">
-              <h3>{{ chamado.titulo }}</h3>
+              <div class="chamado-titulo-container">
+                <h3>{{ chamado.titulo }}</h3>
+                <p class="chamado-descricao">{{ chamado.descricao }}</p>
+              </div>
               <span class="chamado-prioridade" [ngClass]="chamado.prioridade.toLowerCase()">{{ chamado.prioridade }}</span>
             </div>
-            <div class="chamado-body">
-              <p>{{ chamado.descricao }}</p>
-              <div class="chamado-footer">
+            <div class="chamado-footer">
+              <div class="chamado-info">
                 <span class="chamado-data">{{ chamado.data }}</span>
                 <span class="chamado-id">#{{ chamado.id }}</span>
+              </div>
+              <div class="chamado-actions">
+                <button class="action-button" (click)="navegarParaDetalhes(chamado.id)">
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
               </div>
             </div>
           </div>
@@ -38,20 +53,24 @@
     
     <ion-tab tab="em-andamento">
       <div class="chamados-container">
-        <div class="chamados-header">
-          <h2>Chamados Em Andamento</h2>
-        </div>
         <div class="chamados-list">
           <div class="chamado-card" *ngFor="let chamado of getChamadosEmAndamento()">
             <div class="chamado-header">
-              <h3>{{ chamado.titulo }}</h3>
+              <div class="chamado-titulo-container">
+                <h3>{{ chamado.titulo }}</h3>
+                <p class="chamado-descricao">{{ chamado.descricao }}</p>
+              </div>
               <span class="chamado-prioridade" [ngClass]="chamado.prioridade.toLowerCase()">{{ chamado.prioridade }}</span>
             </div>
-            <div class="chamado-body">
-              <p>{{ chamado.descricao }}</p>
-              <div class="chamado-footer">
+            <div class="chamado-footer">
+              <div class="chamado-info">
                 <span class="chamado-data">{{ chamado.data }}</span>
                 <span class="chamado-id">#{{ chamado.id }}</span>
+              </div>
+              <div class="chamado-actions">
+                <button class="action-button" (click)="navegarParaDetalhes(chamado.id)">
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
               </div>
             </div>
           </div>
@@ -64,20 +83,24 @@
     
     <ion-tab tab="concluidos">
       <div class="chamados-container">
-        <div class="chamados-header">
-          <h2>Chamados Concluídos</h2>
-        </div>
         <div class="chamados-list">
           <div class="chamado-card" *ngFor="let chamado of getChamadosConcluidos()">
             <div class="chamado-header">
-              <h3>{{ chamado.titulo }}</h3>
+              <div class="chamado-titulo-container">
+                <h3>{{ chamado.titulo }}</h3>
+                <p class="chamado-descricao">{{ chamado.descricao }}</p>
+              </div>
               <span class="chamado-prioridade" [ngClass]="chamado.prioridade.toLowerCase()">{{ chamado.prioridade }}</span>
             </div>
-            <div class="chamado-body">
-              <p>{{ chamado.descricao }}</p>
-              <div class="chamado-footer">
+            <div class="chamado-footer">
+              <div class="chamado-info">
                 <span class="chamado-data">{{ chamado.data }}</span>
                 <span class="chamado-id">#{{ chamado.id }}</span>
+              </div>
+              <div class="chamado-actions">
+                <button class="action-button" (click)="navegarParaDetalhes(chamado.id)">
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
               </div>
             </div>
           </div>
@@ -90,7 +113,7 @@
     
     <!-- Menu de tabs na parte inferior - Design do Figma -->
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="abertos">
+      <ion-tab-button tab="abertos" (click)="setCurrentTab('abertos')">
         <div class="tab-content">
           <ion-badge *ngIf="getChamadosAbertos().length > 0">{{ getChamadosAbertos().length }}</ion-badge>
           <ion-icon name="document-text-outline"></ion-icon>
@@ -98,7 +121,7 @@
         </div>
       </ion-tab-button>
       
-      <ion-tab-button tab="em-andamento">
+      <ion-tab-button tab="em-andamento" (click)="setCurrentTab('em-andamento')">
         <div class="tab-content">
           <ion-badge *ngIf="getChamadosEmAndamento().length > 0">{{ getChamadosEmAndamento().length }}</ion-badge>
           <ion-icon name="time-outline"></ion-icon>
@@ -106,7 +129,7 @@
         </div>
       </ion-tab-button>
       
-      <ion-tab-button tab="concluidos">
+      <ion-tab-button tab="concluidos" (click)="setCurrentTab('concluidos')">
         <div class="tab-content">
           <ion-badge *ngIf="getChamadosConcluidos().length > 0">{{ getChamadosConcluidos().length }}</ion-badge>
           <ion-icon name="checkmark-done-outline"></ion-icon>

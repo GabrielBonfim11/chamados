@@ -18,4 +18,12 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full',
   },
+  {
+    path: 'chamado-detalhes/:id',
+    loadComponent: () => import('./chamado-detalhes/chamado-detalhes.page').then( m => m.ChamadoDetalhesPage)
+  },
+  {
+    path: 'criar-chamado',
+    loadComponent: () => import('./criar-chamado/criar-chamado.page').then( m => m.CriarChamadoPage)
+  },
 ];

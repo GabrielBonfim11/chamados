@@ -1,0 +1,156 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/chamados" text="" icon="chevron-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Criar Chamado</ion-title>
+    <ion-buttons slot="end">
+      <ion-button style="visibility: hidden">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="criar-chamado-container">
+    <!-- Mensagem de sucesso ou erro -->
+    <div class="mensagem-container" *ngIf="mensagem" [ngClass]="tipoMensagem">
+      <div class="mensagem-conteudo">
+        <ion-icon [name]="tipoMensagem === 'sucesso' ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
+        <span>{{ mensagem }}</span>
+      </div>
+      <ion-button fill="clear" (click)="fecharMensagem()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+    
+    <!-- Formulário de criação de chamado -->
+    <form [formGroup]="chamadoForm" (ngSubmit)="salvarChamado()">
+      <ion-list>
+        <!-- Dados do solicitante -->
+        <div class="form-section">
+          <h3 class="section-title">Dados do Solicitante</h3>
+          
+          <ion-item>
+            <ion-label position="stacked">Nome do Solicitante*</ion-label>
+            <ion-input formControlName="solicitante" placeholder="Digite o nome completo"></ion-input>
+            <div class="error-message" *ngIf="chamadoForm.get('solicitante')?.invalid && chamadoForm.get('solicitante')?.touched">
+              Nome do solicitante é obrigatório
+            </div>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label position="stacked">Local de Trabalho*</ion-label>
+            <ion-input formControlName="local" placeholder="Ex: UBS Central, Escola Municipal, etc."></ion-input>
+            <div class="error-message" *ngIf="chamadoForm.get('local')?.invalid && chamadoForm.get('local')?.touched">
+              Local de trabalho é obrigatório
+            </div>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label position="stacked">Contato*</ion-label>
+            <ion-input formControlName="contato" placeholder="Telefone ou e-mail"></ion-input>
+            <div class="error-message" *ngIf="chamadoForm.get('contato')?.invalid && chamadoForm.get('contato')?.touched">
+              Contato é obrigatório
+            </div>
+          </ion-item>
+        </div>
+        
+        <!-- Dados do chamado -->
+        <div class="form-section">
+          <h3 class="section-title">Dados do Chamado</h3>
+          
+          <ion-item>
+            <ion-label position="stacked">Categoria*</ion-label>
+            <ion-select formControlName="categoria" placeholder="Selecione a categoria">
+              <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
+            </ion-select>
+            <div class="error-message" *ngIf="chamadoForm.get('categoria')?.invalid && chamadoForm.get('categoria')?.touched">
+              Categoria é obrigatória
+            </div>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label position="stacked">Descrição Detalhada*</ion-label>
+            <ion-textarea 
+              formControlName="descricao" 
+              placeholder="Descreva detalhadamente o problema"
+              rows="4"
+              auto-grow="true">
+            </ion-textarea>
+            <div class="error-message" *ngIf="chamadoForm.get('descricao')?.invalid && chamadoForm.get('descricao')?.touched">
+              <span *ngIf="chamadoForm.get('descricao')?.errors?.['required']">Descrição é obrigatória</span>
+              <span *ngIf="chamadoForm.get('descricao')?.errors?.['minlength']">Descrição deve ter pelo menos 10 caracteres</span>
+            </div>
+          </ion-item>
+          
+          <div class="prioridade-container">
+            <ion-label>Urgência*</ion-label>
+            <ion-radio-group formControlName="prioridade" class="prioridade-options">
+              <ion-item lines="none" *ngFor="let prioridade of prioridades">
+                <ion-radio [value]="prioridade">{{ prioridade }}</ion-radio>
+                <ion-label>{{ prioridade }}</ion-label>
+              </ion-item>
+            </ion-radio-group>
+          </div>
+        </div>
+        
+        <!-- Anexos -->
+        <div class="form-section">
+          <h3 class="section-title">Anexos</h3>
+          
+          <div class="anexos-container">
+            <div class="anexo-input-container">
+              <input 
+                type="file" 
+                id="anexo-input" 
+                accept="image/*,video/*" 
+                (change)="onFileSelected($event)" 
+                class="anexo-input"
+              />
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                class="anexo-button" 
+                (click)="document.getElementById('anexo-input')?.click()">
+                <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+                Selecionar Arquivo
+              </ion-button>
+              <ion-button 
+                expand="block" 
+                [disabled]="!anexoSelecionado" 
+                (click)="adicionarAnexo()">
+                Adicionar Anexo
+              </ion-button>
+              <div class="anexo-selecionado" *ngIf="anexoSelecionado">
+                <span>{{ anexoSelecionado.name }}</span>
+              </div>
+            </div>
+            
+            <div class="anexos-lista" *ngIf="anexos.length > 0">
+              <h4>Anexos adicionados:</h4>
+              <div class="anexo-item" *ngFor="let anexo of anexos; let i = index">
+                <ion-icon [name]="anexo.tipo === 'imagem' ? 'image-outline' : 'videocam-outline'"></ion-icon>
+                <span class="anexo-nome">{{ anexo.nome }}</span>
+                <ion-button fill="clear" color="danger" (click)="removerAnexo(i)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ion-list>
+      
+      <!-- Botão de salvar -->
+      <div class="botoes-container">
+        <ion-button expand="block" type="submit" class="salvar-button">
+          Salvar Chamado
+        </ion-button>
+        <ion-button expand="block" fill="outline" routerLink="/chamados" class="cancelar-button">
+          Cancelar
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

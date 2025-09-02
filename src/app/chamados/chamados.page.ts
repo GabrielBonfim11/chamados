@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { documentTextOutline, timeOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { documentTextOutline, timeOutline, checkmarkDoneOutline, eyeOutline, addOutline } from 'ionicons/icons';
 import { ChamadosService, Chamado } from '../services/chamados.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chamados',
@@ -27,25 +28,38 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     IonLabel,
     IonBadge,
     IonTab,
-    IonRouterOutlet
+    IonRouterOutlet,
+    IonFab,
+    IonFabButton
   ]
 })
 export class ChamadosPage implements OnInit {
   chamadosAbertos: Chamado[] = [];
   chamadosEmAndamento: Chamado[] = [];
   chamadosConcluidos: Chamado[] = [];
+  selectedTab: string = 'abertos';
 
-  constructor(private chamadosService: ChamadosService) {
+  constructor(private chamadosService: ChamadosService, private router: Router) {
     // Adiciona os ícones que serão usados
     addIcons({
       documentTextOutline,
       timeOutline,
-      checkmarkDoneOutline
+      checkmarkDoneOutline,
+      eyeOutline,
+      addOutline
     });
   }
 
   ngOnInit() {
     this.carregarChamados();
+  }
+  
+  navegarParaDetalhes(id: number) {
+    this.router.navigate(['/chamado-detalhes', id]);
+  }
+  
+  navegarParaCriarChamado() {
+    this.router.navigate(['/criar-chamado']);
   }
 
   // Carregar todos os chamados do serviço
@@ -74,5 +88,24 @@ export class ChamadosPage implements OnInit {
 
   getChamadosConcluidos() {
     return this.chamadosConcluidos;
+  }
+  
+  // Método para atualizar a tab selecionada
+  setCurrentTab(tab: string) {
+    this.selectedTab = tab;
+  }
+  
+  // Método para obter o título baseado na tab selecionada
+  getTabTitle() {
+    switch(this.selectedTab) {
+      case 'abertos':
+        return 'Chamados Abertos';
+      case 'em-andamento':
+        return 'Chamados em Andamento';
+      case 'concluidos':
+        return 'Chamados Concluídos';
+      default:
+        return 'Chamados';
+    }
   }
 }

@@ -1,0 +1,238 @@
+ion-header {
+  ion-toolbar {
+    --background: transparent;
+    --border-color: transparent;
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.criar-chamado-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+// Estilos para as seções do formulário
+.form-section {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin: 0 0 16px 0;
+  }
+  
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --background: transparent;
+    --border-color: var(--ion-color-light);
+    margin-bottom: 12px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    ion-label {
+      color: var(--ion-color-dark);
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    ion-input, ion-textarea, ion-select {
+      --background: #f9f9f9;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+      --border-radius: 8px;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+  }
+  
+  .error-message {
+    color: var(--ion-color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+    padding-left: 12px;
+  }
+}
+
+// Estilos para o seletor de prioridade
+.prioridade-container {
+  margin-top: 16px;
+  
+  ion-label {
+    color: var(--ion-color-dark);
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .prioridade-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 8px;
+    
+    ion-item {
+      --padding-start: 0;
+      --inner-padding-end: 0;
+      --background: transparent;
+      --border-color: transparent;
+      width: 33%;
+      margin: 0;
+      
+      ion-radio {
+        margin-right: 8px;
+      }
+      
+      ion-label {
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Estilos para os anexos
+.anexos-container {
+  .anexo-input {
+    display: none;
+  }
+  
+  .anexo-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    
+    .anexo-button {
+      margin: 0;
+    }
+    
+    .anexo-selecionado {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+      padding: 8px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+  }
+  
+  .anexos-lista {
+    h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 12px 0;
+    }
+    
+    .anexo-item {
+      display: flex;
+      align-items: center;
+      background-color: #f9f9f9;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      
+      ion-icon {
+        font-size: 20px;
+        color: var(--ion-color-primary);
+        margin-right: 8px;
+      }
+      
+      .anexo-nome {
+        flex: 1;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      ion-button {
+        --padding-start: 4px;
+        --padding-end: 4px;
+        height: 30px;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Estilos para os botões de ação
+.botoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 32px;
+  
+  .salvar-button, .cancelar-button {
+    margin: 0;
+    height: 48px;
+    font-weight: 500;
+  }
+}
+
+// Estilos para mensagens de sucesso/erro
+.mensagem-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  
+  &.sucesso {
+    background-color: rgba(var(--ion-color-success-rgb), 0.15);
+    color: var(--ion-color-success-shade);
+  }
+  
+  &.erro {
+    background-color: rgba(var(--ion-color-danger-rgb), 0.15);
+    color: var(--ion-color-danger-shade);
+  }
+  
+  .mensagem-conteudo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    ion-icon {
+      font-size: 20px;
+    }
+    
+    span {
+      font-size: 14px;
+    }
+  }
+  
+  ion-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 30px;
+    margin: 0;
+  }
+}

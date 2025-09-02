@@ -1,0 +1,56 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f8f9fa"/>
+  
+  <!-- Printer Base -->
+  <rect x="80" y="150" width="240" height="100" rx="8" fill="#34495e"/>
+  <rect x="90" y="160" width="220" height="80" rx="4" fill="#2c3e50"/>
+  
+  <!-- Printer Top -->
+  <rect x="100" y="120" width="200" height="40" rx="4" fill="#95a5a6"/>
+  <rect x="110" y="130" width="180" height="20" fill="#ecf0f1"/>
+  
+  <!-- Paper Tray -->
+  <rect x="120" y="180" width="160" height="40" rx="2" fill="#bdc3c7"/>
+  
+  <!-- Control Panel -->
+  <rect x="280" y="170" width="30" height="20" rx="2" fill="#3498db"/>
+  <circle cx="295" cy="180" r="3" fill="#e74c3c"/>
+  
+  <!-- Paper Jam Indicator -->
+  <rect x="140" y="190" width="120" height="20" fill="#f39c12"/>
+  <text x="200" y="205" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">PAPEL PRESO</text>
+  
+  <!-- Jammed Paper -->
+  <path d="M160 200 Q180 185 200 200 Q220 215 240 200" stroke="#ecf0f1" stroke-width="8" fill="none"/>
+  <path d="M170 205 Q190 190 210 205 Q230 220 250 205" stroke="#ecf0f1" stroke-width="6" fill="none"/>
+  
+  <!-- Error Display -->
+  <rect x="285" y="175" width="20" height="10" fill="#e74c3c"/>
+  <text x="295" y="183" text-anchor="middle" fill="white" font-family="Arial" font-size="8">ERR</text>
+  
+  <!-- Warning Signs -->
+  <g transform="translate(60, 180)">
+    <polygon points="10,0 20,17 0,17" fill="#f39c12"/>
+    <text x="10" y="13" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">!</text>
+  </g>
+  
+  <g transform="translate(340, 180)">
+    <polygon points="10,0 20,17 0,17" fill="#f39c12"/>
+    <text x="10" y="13" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">!</text>
+  </g>
+  
+  <!-- Power LED -->
+  <circle cx="295" cy="165" r="2" fill="#27ae60"/>
+  
+  <!-- Title -->
+  <text x="200" y="30" text-anchor="middle" fill="#2c3e50" font-family="Arial" font-size="16" font-weight="bold">Impressora com Defeito</text>
+  <text x="200" y="50" text-anchor="middle" fill="#7f8c8d" font-family="Arial" font-size="12">Papel preso no alimentador</text>
+  
+  <!-- Status Lines -->
+  <line x1="50" y1="270" x2="120" y2="270" stroke="#e74c3c" stroke-width="2"/>
+  <text x="85" y="285" text-anchor="middle" fill="#e74c3c" font-family="Arial" font-size="10">OFFLINE</text>
+  
+  <line x1="280" y1="270" x2="350" y2="270" stroke="#f39c12" stroke-width="2"/>
+  <text x="315" y="285" text-anchor="middle" fill="#f39c12" font-family="Arial" font-size="10">ATENÇÃO</text>
+</svg>
