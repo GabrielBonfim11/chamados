@@ -199,7 +199,6 @@ ion-tab-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  // margin: 0 4px;
   transition: all 0.3s ease;
   
   .tab-content {
@@ -234,6 +233,14 @@ ion-tab-button {
     ion-icon, ion-label {
       color: var(--ion-color-primary);
       font-weight: 700;
+    }
+  }
+  
+  // Adicionar estilos de hover
+  &:hover:not(.tab-selected) {
+    ion-icon, ion-label {
+      color: var(--ion-color-secondary);
+      transform: scale(1.05);
     }
   }
   
