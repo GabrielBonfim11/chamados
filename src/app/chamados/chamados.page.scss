@@ -175,11 +175,11 @@ ion-content {
 
 // Estilos para as tabs - Design do Figma
 ion-tab-bar {
-  --background: #013196;;
+  --background: #013196;
   border-top: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 0 8px;
-  height: 52px;
+  height: 60px;
   border-radius: 26px;
   margin: 0 10px 8px;
   position: relative;
@@ -200,15 +200,16 @@ ion-tab-button {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  flex-direction: column;
   
   .tab-content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    // padding: 6px 2px;
+    padding: 6px 2px;
     position: relative;
   }
   
@@ -245,41 +246,41 @@ ion-tab-button {
   }
   
   ion-icon {
-    font-size: 24px;
-    margin-bottom: 4px;
+    font-size: 20px;
+    margin-bottom: 2px;
     transition: all 0.2s ease;
-    min-height: 24px;
+    min-height: 20px;
   }
   
   ion-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    margin: 2px 0;
+    margin: 0;
     transition: all 0.2s ease;
-    white-space: normal;
+    white-space: nowrap;
     text-align: center;
-    line-height: 1.1;
+    line-height: 1;
     max-width: 100%;
-    padding: 0 2px;
+    padding: 0;
   }
   
   ion-badge {
     position: absolute;
-    top: 4px;
-    right: 50%;
-    transform: translateX(12px);
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
+    top: -2px;
+    right: 20%;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 8px;
     background-color: var(--ion-color-danger);
     z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 18px;
-    height: 18px;
+    min-width: 14px;
+    height: 14px;
+    color: white;
     
     .tab-selected & {
       background-color: var(--ion-color-danger);

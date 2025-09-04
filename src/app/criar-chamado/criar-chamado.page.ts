@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton,
 import { Router } from '@angular/router';
 import { ChamadosService } from '../services/chamados.service';
 import { addIcons } from 'ionicons';
-import { cloudUploadOutline, imageOutline, videocamOutline, closeCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { cloudUploadOutline, imageOutline, videocamOutline, closeCircleOutline, checkmarkCircleOutline, chevronBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-criar-chamado',
@@ -55,7 +55,8 @@ export class CriarChamadoPage implements OnInit {
       imageOutline,
       videocamOutline,
       closeCircleOutline,
-      checkmarkCircleOutline
+      checkmarkCircleOutline,
+      chevronBackOutline
     });
   }
 

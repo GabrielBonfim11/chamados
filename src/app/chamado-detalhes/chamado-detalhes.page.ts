@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonBadge, IonList, IonTextarea, IonButton, IonIcon, IonSelect, IonSelectOption, IonChip, IonAvatar, IonImg, IonText } from '@ionic/angular/standalone';
 import { ChamadosService, Chamado, Comentario } from '../services/chamados.service';
 import { addIcons } from 'ionicons';
-import { sendOutline, imageOutline, videocamOutline, attachOutline, timeOutline, personOutline, locationOutline, callOutline, mailOutline, alertCircleOutline } from 'ionicons/icons';
+import { sendOutline, imageOutline, videocamOutline, attachOutline, timeOutline, personOutline, locationOutline, callOutline, mailOutline, alertCircleOutline, chevronBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-chamado-detalhes',
@@ -43,7 +43,7 @@ import { sendOutline, imageOutline, videocamOutline, attachOutline, timeOutline,
 })
 export class ChamadoDetalhesPage implements OnInit {
   chamado?: Chamado;
-  chamadoId: number = 0;
+  chamadoId: string = '';
   novoComentario: string = '';
   statusOptions: string[] = ['aberto', 'em_andamento', 'concluido', 'fechado'];
   statusLabels: { [key: string]: string } = {
@@ -68,7 +68,8 @@ export class ChamadoDetalhesPage implements OnInit {
       locationOutline,
       callOutline,
       mailOutline,
-      alertCircleOutline
+      alertCircleOutline,
+      chevronBackOutline
     });
   }
 
@@ -77,7 +78,7 @@ export class ChamadoDetalhesPage implements OnInit {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
-        this.chamadoId = +idParam;
+        this.chamadoId = idParam;
         this.carregarChamado();
       }
     });
@@ -95,7 +96,7 @@ export class ChamadoDetalhesPage implements OnInit {
     if (!this.chamado || !this.novoComentario.trim()) return;
     
     this.chamadosService.adicionarComentario(
-      this.chamado.id,
+      this.chamado.id.toString(),
       'Usuário Atual', // Em uma aplicação real, seria o usuário logado
       this.novoComentario
     ).subscribe(comentario => {

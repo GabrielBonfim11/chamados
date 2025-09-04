@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, from, map, catchError, of } from 'rxjs';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, Firestore } from 'firebase/firestore';
+import { environment } from '../../environments/environment';
 
 export interface Comentario {
   id: number;
@@ -16,7 +19,7 @@ export interface Anexo {
 }
 
 export interface Chamado {
-  id: number;
+  id: number | string;
   titulo: string;
   descricao: string;
   data: string;
@@ -35,8 +38,11 @@ export interface Chamado {
   providedIn: 'root'
 })
 export class ChamadosService {
-  // Dados de exemplo para os chamados (serão substituídos pela integração com Firebase)
-  private chamados: Chamado[] = [
+  private db?: Firestore;
+  private chamadosCollectionName = 'chamados';
+  
+  // Dados de exemplo para os chamados (backup local)
+  private chamadosBackup: Chamado[] = [
     { 
       id: 1, 
       titulo: 'Problema na rede', 
@@ -117,86 +123,213 @@ export class ChamadosService {
     },
   ];
 
-  constructor() {}
+  constructor() {
+    try {
+      console.log('Inicializando Firebase com config:', environment.firebase);
+      const app = initializeApp(environment.firebase);
+      this.db = getFirestore(app);
+      console.log('Firebase inicializado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao inicializar Firebase:', error);
+      console.warn('Firebase não configurado, usando dados locais');
+    }
+  }
 
   // Obter todos os chamados
   getChamados(): Observable<Chamado[]> {
-    return of(this.chamados);
+    if (!this.db) {
+      return of(this.chamadosBackup);
+    }
+    
+    return from(getDocs(collection(this.db, this.chamadosCollectionName))).pipe(
+      map(snapshot => {
+        return snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Chamado));
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar chamados:', error);
+        return of(this.chamadosBackup);
+      })
+    );
   }
 
   // Obter chamados por status
   getChamadosPorStatus(status: 'aberto' | 'em_andamento' | 'concluido'): Observable<Chamado[]> {
-    const chamadosFiltrados = this.chamados.filter(chamado => chamado.status === status);
-    return of(chamadosFiltrados);
+    if (!this.db) {
+      const chamadosFiltrados = this.chamadosBackup.filter(chamado => chamado.status === status);
+      return of(chamadosFiltrados);
+    }
+    
+    const q = query(collection(this.db, this.chamadosCollectionName), where('status', '==', status));
+    return from(getDocs(q)).pipe(
+      map(snapshot => {
+        return snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Chamado));
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar chamados por status:', error);
+        const chamadosFiltrados = this.chamadosBackup.filter(chamado => chamado.status === status);
+        return of(chamadosFiltrados);
+      })
+    );
   }
 
   // Obter um chamado específico por ID
-  getChamadoPorId(id: number): Observable<Chamado | undefined> {
-    const chamado = this.chamados.find(c => c.id === id);
-    return of(chamado);
+  getChamadoPorId(id: string): Observable<Chamado | undefined> {
+    if (!this.db) {
+      const chamado = this.chamadosBackup.find(c => c.id.toString() === id);
+      return of(chamado);
+    }
+    
+    return from(getDoc(doc(this.db, this.chamadosCollectionName, id))).pipe(
+      map(docSnap => {
+        if (docSnap.exists()) {
+          return {
+            id: docSnap.id,
+            ...docSnap.data()
+          } as Chamado;
+        }
+        return undefined;
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar chamado por ID:', error);
+        const chamado = this.chamadosBackup.find(c => c.id.toString() === id);
+        return of(chamado);
+      })
+    );
   }
 
   // Adicionar um novo chamado
   adicionarChamado(chamado: Omit<Chamado, 'id'>): Observable<Chamado> {
-    const novoChamado: Chamado = {
-      ...chamado,
-      id: this.gerarNovoId()
-    };
-    this.chamados.push(novoChamado);
-    return of(novoChamado);
+    console.log('Tentando adicionar chamado:', chamado);
+    
+    if (!this.db) {
+      console.log('Firebase não disponível, salvando localmente');
+      const chamadoLocal: Chamado = {
+        ...chamado,
+        id: this.gerarNovoId()
+      };
+      this.chamadosBackup.push(chamadoLocal);
+      return of(chamadoLocal);
+    }
+    
+    console.log('Salvando chamado no Firebase...');
+    return from(addDoc(collection(this.db, this.chamadosCollectionName), chamado)).pipe(
+      map(docRef => {
+        console.log('Chamado salvo no Firebase com ID:', docRef.id);
+        const novoChamado: Chamado = {
+          ...chamado,
+          id: docRef.id
+        };
+        return novoChamado;
+      }),
+      catchError(error => {
+        console.error('Erro ao adicionar chamado no Firebase:', error);
+        // Fallback para array local
+        const chamadoLocal: Chamado = {
+          ...chamado,
+          id: this.gerarNovoId()
+        };
+        this.chamadosBackup.push(chamadoLocal);
+        return of(chamadoLocal);
+      })
+    );
   }
 
   // Atualizar um chamado existente
   atualizarChamado(chamado: Chamado): Observable<Chamado> {
-    const index = this.chamados.findIndex(c => c.id === chamado.id);
-    if (index !== -1) {
-      this.chamados[index] = chamado;
+    if (!this.db) {
+      const index = this.chamadosBackup.findIndex(c => c.id === chamado.id);
+      if (index !== -1) {
+        this.chamadosBackup[index] = chamado;
+      }
+      return of(chamado);
     }
-    return of(chamado);
+    
+    return from(updateDoc(doc(this.db, this.chamadosCollectionName, chamado.id.toString()), { ...chamado })).pipe(
+      map(() => chamado),
+      catchError(error => {
+        console.error('Erro ao atualizar chamado:', error);
+        // Fallback para array local
+        const index = this.chamadosBackup.findIndex(c => c.id === chamado.id);
+        if (index !== -1) {
+          this.chamadosBackup[index] = chamado;
+        }
+        return of(chamado);
+      })
+    );
   }
 
   // Excluir um chamado
-  excluirChamado(id: number): Observable<boolean> {
-    const index = this.chamados.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.chamados.splice(index, 1);
-      return of(true);
+  excluirChamado(id: string): Observable<boolean> {
+    if (!this.db) {
+      const index = this.chamadosBackup.findIndex(c => c.id.toString() === id);
+      if (index !== -1) {
+        this.chamadosBackup.splice(index, 1);
+        return of(true);
+      }
+      return of(false);
     }
-    return of(false);
+    
+    return from(deleteDoc(doc(this.db, this.chamadosCollectionName, id))).pipe(
+      map(() => true),
+      catchError(error => {
+        console.error('Erro ao excluir chamado:', error);
+        // Fallback para array local
+        const index = this.chamadosBackup.findIndex(c => c.id.toString() === id);
+        if (index !== -1) {
+          this.chamadosBackup.splice(index, 1);
+          return of(true);
+        }
+        return of(false);
+      })
+    );
   }
 
-  // Gerar um novo ID para um chamado
+  // Gerar um novo ID para um chamado (fallback local)
   private gerarNovoId(): number {
-    return this.chamados.length > 0 
-      ? Math.max(...this.chamados.map(c => c.id)) + 1 
+    return this.chamadosBackup.length > 0 
+      ? Math.max(...this.chamadosBackup.map(c => c.id as number)) + 1 
       : 1;
   }
   
   // Adicionar um comentário a um chamado existente
-  adicionarComentario(chamadoId: number, autor: string, texto: string): Observable<Comentario | undefined> {
-    const chamado = this.chamados.find(c => c.id === chamadoId);
-    
-    if (chamado) {
-      // Inicializa o array de comentários se não existir
-      if (!chamado.comentarios) {
-        chamado.comentarios = [];
-      }
-      
-      // Cria o novo comentário
-      const novoComentario: Comentario = {
-        id: this.gerarNovoIdComentario(chamado.comentarios),
-        autor,
-        texto,
-        data: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-      };
-      
-      // Adiciona o comentário ao chamado
-      chamado.comentarios.push(novoComentario);
-      
-      return of(novoComentario);
-    }
-    
-    return of(undefined);
+  adicionarComentario(chamadoId: string, autor: string, texto: string): Observable<Comentario | undefined> {
+    return this.getChamadoPorId(chamadoId).pipe(
+      map(chamado => {
+        if (chamado) {
+          // Inicializa o array de comentários se não existir
+          if (!chamado.comentarios) {
+            chamado.comentarios = [];
+          }
+          
+          // Cria o novo comentário
+          const novoComentario: Comentario = {
+            id: this.gerarNovoIdComentario(chamado.comentarios),
+            autor,
+            texto,
+            data: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+          };
+          
+          // Adiciona o comentário ao chamado
+          chamado.comentarios.push(novoComentario);
+          
+          // Atualiza o chamado no Firebase
+          this.atualizarChamado(chamado).subscribe();
+          
+          return novoComentario;
+        }
+        return undefined;
+      }),
+      catchError(error => {
+        console.error('Erro ao adicionar comentário:', error);
+        return of(undefined);
+      })
+    );
   }
   
   // Gerar um novo ID para um comentário

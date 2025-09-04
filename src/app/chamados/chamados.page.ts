@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { documentTextOutline, timeOutline, checkmarkDoneOutline, eyeOutline, addOutline } from 'ionicons/icons';
+import { documentTextOutline, timeOutline, checkmarkDoneOutline, eyeOutline, addOutline, exitOutline } from 'ionicons/icons';
 import { ChamadosService, Chamado } from '../services/chamados.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
@@ -46,7 +46,8 @@ export class ChamadosPage implements OnInit {
       timeOutline,
       checkmarkDoneOutline,
       eyeOutline,
-      addOutline
+      addOutline,
+      exitOutline
     });
   }
 
@@ -54,7 +55,7 @@ export class ChamadosPage implements OnInit {
     this.carregarChamados();
   }
   
-  navegarParaDetalhes(id: number) {
+  navegarParaDetalhes(id: string | number) {
     this.router.navigate(['/chamado-detalhes', id]);
   }
   

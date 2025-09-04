@@ -44,3 +44,37 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Estilos globais para melhorar a consistência */
+ion-content {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+/* Correções para tabs */
+ion-tabs {
+  height: 100%;
+}
+
+ion-tab {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Melhorias nos botões */
+ion-button {
+  --border-radius: 8px;
+}
+
+/* Melhorias nos cards */
+ion-card {
+  --border-radius: 12px;
+  margin: 16px;
+}
+
+/* Melhorias nos inputs */
+ion-input, ion-textarea, ion-select {
+  --border-radius: 8px;
+}
