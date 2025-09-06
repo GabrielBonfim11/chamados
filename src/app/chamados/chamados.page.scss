@@ -204,7 +204,7 @@ ion-tab-button {
   
   .tab-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -289,6 +289,20 @@ ion-tab-button {
   }
 }
 
+// Ajuste do botão flutuante para não sobrepor o tab-menu
+ion-fab {
+  --ion-safe-area-bottom: 0;
+  
+  ion-fab-button {
+    margin-bottom: 80px !important; // Espaço para o tab-menu
+    
+    &:hover {
+      transform: scale(1.1);
+      transition: transform 0.2s ease;
+    }
+  }
+}
+
 // Responsividade
 @media (min-width: 768px) {
   .chamados-list {
@@ -310,6 +324,13 @@ ion-tab-button {
     
     p {
       flex: 1;
+    }
+  }
+  
+  // Ajuste do botão flutuante em telas maiores
+  ion-fab {
+    ion-fab-button {
+      margin-bottom: 60px;
     }
   }
 }

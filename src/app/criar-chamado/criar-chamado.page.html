@@ -62,16 +62,6 @@
           <h3 class="section-title">Dados do Chamado</h3>
           
           <ion-item>
-            <ion-label position="stacked">Categoria*</ion-label>
-            <ion-select formControlName="categoria" placeholder="Selecione a categoria">
-              <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
-            </ion-select>
-            <div class="error-message" *ngIf="chamadoForm.get('categoria')?.invalid && chamadoForm.get('categoria')?.touched">
-              Categoria é obrigatória
-            </div>
-          </ion-item>
-          
-          <ion-item>
             <ion-label position="stacked">Descrição Detalhada*</ion-label>
             <ion-textarea 
               formControlName="descricao" 
@@ -103,17 +93,18 @@
           <div class="anexos-container">
             <div class="anexo-input-container">
               <input 
+                #fileInput
                 type="file" 
-                id="anexo-input" 
                 accept="image/*,video/*" 
                 (change)="onFileSelected($event)" 
                 class="anexo-input"
+                style="display: none;"
               />
               <ion-button 
                 expand="block" 
                 fill="outline" 
                 class="anexo-button" 
-                (click)="document.getElementById('anexo-input')?.click()">
+                (click)="abrirSeletorArquivos()">
                 <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
                 Selecionar Arquivo
               </ion-button>
@@ -124,7 +115,7 @@
                 Adicionar Anexo
               </ion-button>
               <div class="anexo-selecionado" *ngIf="anexoSelecionado">
-                <span>{{ anexoSelecionado.name }}</span>
+                <span>{{ anexoSelecionado?.name }}</span>
               </div>
             </div>
             

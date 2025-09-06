@@ -16,7 +16,36 @@ ion-header {
 }
 
 ion-content {
-  --background: #f5f5f5;
+  --background: #f5f5f5 !important;
+  background: #f5f5f5 !important;
+}
+
+// Forçar cores claras independente do tema
+:host {
+  --ion-background-color: #f5f5f5 !important;
+  --ion-text-color: #000000 !important;
+  --ion-color-step-50: #ffffff !important;
+  --ion-color-step-100: #f9f9f9 !important;
+  --ion-color-step-150: #f5f5f5 !important;
+  
+  // Forçar cores em todos os cards
+  ion-card {
+    background: #ffffff !important;
+    --background: #ffffff !important;
+    color: #000000 !important;
+    --color: #000000 !important;
+  }
+  
+  // Forçar cores em textos
+  h1, h2, h3, h4, h5, h6, p, span, ion-label {
+    color: #000000 !important;
+  }
+  
+  // Forçar cores em inputs e botões
+  ion-input, ion-textarea, ion-select, ion-button {
+    --color: #000000 !important;
+    --background: #ffffff !important;
+  }
 }
 
 .chamado-detalhes-container {
@@ -24,6 +53,8 @@ ion-content {
   flex-direction: column;
   gap: 16px;
   padding: 16px;
+  background: #f5f5f5 !important;
+  min-height: 100vh;
 }
 
 // Estilo do card de cabeçalho
@@ -31,6 +62,8 @@ ion-content {
   margin: 0;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: #ffffff !important;
+  --background: #ffffff !important;
   
   ion-card-header {
     padding: 16px;
@@ -44,6 +77,7 @@ ion-content {
         font-size: 18px;
         font-weight: 600;
         margin: 0;
+        color: #000000 !important;
       }
       
       .status-badge {

@@ -25,11 +25,11 @@ export interface Chamado {
   data: string;
   dataEncerramento?: string;
   prioridade: string;
-  status: 'aberto' | 'em_andamento' | 'concluido' | 'fechado';
+  status: 'aberto' | 'em_andamento' | 'concluido';
   solicitante: string;
+  numero?: Observable<number>;
   local: string;
   contato?: string;
-  categoria?: string;
   comentarios?: Comentario[];
   anexos?: Anexo[];
 }
@@ -40,6 +40,7 @@ export interface Chamado {
 export class ChamadosService {
   private db?: Firestore;
   private chamadosCollectionName = 'chamados';
+  private numeroChamadosCollectionName = 'numeroChamado';
   
   // Dados de exemplo para os chamados (backup local)
   private chamadosBackup: Chamado[] = [
@@ -53,7 +54,6 @@ export class ChamadosService {
       solicitante: 'Maria Silva',
       local: 'Secretaria de Educação',
       contato: 'maria.silva@email.com',
-      categoria: 'TI',
       comentarios: [
         { id: 1, autor: 'João Técnico', texto: 'Vou verificar o problema hoje à tarde.', data: '2023-08-30 10:30' },
         { id: 2, autor: 'Maria Silva', texto: 'Obrigada! Estamos sem acesso a sistemas importantes.', data: '2023-08-30 11:15' }
@@ -72,7 +72,6 @@ export class ChamadosService {
       solicitante: 'Carlos Mendes',
       local: 'UBS Central',
       contato: '(11) 98765-4321',
-      categoria: 'TI'
     },
     { 
       id: 3, 
@@ -84,7 +83,6 @@ export class ChamadosService {
       solicitante: 'Ana Oliveira',
       local: 'Escola Municipal Monteiro Lobato',
       contato: 'ana.oliveira@email.com',
-      categoria: 'TI',
       comentarios: [
         { id: 3, autor: 'Pedro Suporte', texto: 'Já estou a caminho para verificar o problema.', data: '2023-08-28 13:40' }
       ],
@@ -103,7 +101,6 @@ export class ChamadosService {
       solicitante: 'Roberto Almeida',
       local: 'Escola Municipal Paulo Freire',
       contato: 'roberto.almeida@email.com',
-      categoria: 'TI',
       comentarios: [
         { id: 4, autor: 'Equipe de TI', texto: 'Atualizações concluídas em todos os 15 computadores.', data: '2023-08-27 16:30' }
       ]
@@ -119,7 +116,6 @@ export class ChamadosService {
       solicitante: 'Fernanda Costa',
       local: 'Secretaria de Saúde',
       contato: 'fernanda.costa@email.com',
-      categoria: 'TI'
     },
   ];
 
@@ -204,25 +200,29 @@ export class ChamadosService {
   }
 
   // Adicionar um novo chamado
-  adicionarChamado(chamado: Omit<Chamado, 'id'>): Observable<Chamado> {
+  adicionarChamado(chamado: Omit<Chamado, 'id' | 'numero'>): Observable<Chamado> {
     console.log('Tentando adicionar chamado:', chamado);
     
     if (!this.db) {
       console.log('Firebase não disponível, salvando localmente');
       const chamadoLocal: Chamado = {
         ...chamado,
-        id: this.gerarNovoId()
+        id: this.gerarNovoId(),
       };
       this.chamadosBackup.push(chamadoLocal);
       return of(chamadoLocal);
     }
+
+    var numeroChamado = this.gerarNumeroChamado();
     
     console.log('Salvando chamado no Firebase...');
+     console.log(numeroChamado);
     return from(addDoc(collection(this.db, this.chamadosCollectionName), chamado)).pipe(
       map(docRef => {
         console.log('Chamado salvo no Firebase com ID:', docRef.id);
         const novoChamado: Chamado = {
           ...chamado,
+          numero: this.gerarNumeroChamado(),
           id: docRef.id
         };
         return novoChamado;
@@ -295,6 +295,22 @@ export class ChamadosService {
     return this.chamadosBackup.length > 0 
       ? Math.max(...this.chamadosBackup.map(c => c.id as number)) + 1 
       : 1;
+  }
+
+  gerarNumeroChamado(): Observable<number> {
+    if(!this.db){
+      return of(0);
+    }
+    return from(getDoc(doc(this.db, this.numeroChamadosCollectionName, '1'))).pipe(
+      map(docSnap => {
+        if (docSnap.exists()) {
+          let numero = docSnap.data() as { numero: number }
+          console.log("AAAAAAAAAAAAAAAAAAAAA");
+          return numero.numero;
+        }
+        return 0;
+      })
+    );
   }
   
   // Adicionar um comentário a um chamado existente

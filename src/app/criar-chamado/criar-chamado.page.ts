@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton, IonIcon, IonList, IonRadioGroup, IonRadio } from '@ionic/angular/standalone';
@@ -37,13 +37,13 @@ import { cloudUploadOutline, imageOutline, videocamOutline, closeCircleOutline, 
 })
 export class CriarChamadoPage implements OnInit {
   chamadoForm!: FormGroup;
-  categorias: string[] = ['TI', 'Elétrica', 'Manutenção Predial', 'Transporte', 'Outro'];
   prioridades: string[] = ['Alta', 'Média', 'Baixa'];
   anexos: { nome: string; tipo: 'imagem' | 'video'; arquivo: File; url?: string }[] = [];
   anexoSelecionado: File | null = null;
   mensagem: string = '';
   tipoMensagem: 'sucesso' | 'erro' | '' = '';
-  document: any;
+  
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -69,12 +69,16 @@ export class CriarChamadoPage implements OnInit {
       solicitante: ['', [Validators.required]],
       local: ['', [Validators.required]],
       descricao: ['', [Validators.required, Validators.minLength(10)]],
-      prioridade: ['Média', [Validators.required]],
-      categoria: ['', [Validators.required]],
+      prioridade: ['Baixa', [Validators.required]],
       contato: ['', [Validators.required]]
     });
   }
 
+  // Função para abrir o seletor de arquivos
+  abrirSeletorArquivos() {
+    this.fileInput.nativeElement.click();
+  }
+  
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -93,7 +97,7 @@ export class CriarChamadoPage implements OnInit {
         url: URL.createObjectURL(file) // Cria URL temporária para preview
       };
       this.anexos.push(anexo);
-      this.anexoSelecionado = file.name;
+      this.anexoSelecionado = file;
       
       // Limpa o input para permitir selecionar o mesmo arquivo novamente
       event.target.value = '';
@@ -110,9 +114,8 @@ export class CriarChamadoPage implements OnInit {
       });
       this.anexoSelecionado = null;
       // Limpar o input de arquivo
-      const fileInput = document.getElementById('anexo-input') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = '';
+      if (this.fileInput) {
+        this.fileInput.nativeElement.value = '';
       }
     }
   }
@@ -135,7 +138,7 @@ export class CriarChamadoPage implements OnInit {
       
       // Adicionar chamado usando o serviço
       this.chamadosService.adicionarChamado({
-        titulo: `Chamado de ${formData.categoria} - ${formData.local}`,
+        titulo: `${formData.local}`,
         descricao: formData.descricao,
         data: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
         prioridade: formData.prioridade,
@@ -143,7 +146,6 @@ export class CriarChamadoPage implements OnInit {
         solicitante: formData.solicitante,
         local: formData.local,
         contato: formData.contato,
-        categoria: formData.categoria,
         comentarios: [],
         anexos: anexosFormatados
       });

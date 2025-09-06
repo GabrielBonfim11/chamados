@@ -1,14 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button color="light" defaultHref="/chamados" text="" icon="chevron-back-outline" color="primary"></ion-back-button>
+      <ion-back-button color="light" defaultHref="/chamados" text="" icon="chevron-back-outline"></ion-back-button>
     </ion-buttons>
     <ion-title class="ion-text-center">Detalhes do Chamado</ion-title>
-    <ion-buttons slot="end">
-      <ion-button style="visibility: hidden">
-        <ion-icon name="chevron-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -75,14 +70,6 @@
               <ion-badge [color]="getPrioridadeColor(chamado.prioridade)" class="prioridade-badge">
                 {{ chamado.prioridade }}
               </ion-badge>
-            </div>
-          </div>
-          
-          <div class="info-item" *ngIf="chamado.categoria">
-            <ion-icon name="folder-outline" color="primary"></ion-icon>
-            <div class="info-content">
-              <ion-label class="info-label">Categoria</ion-label>
-              <ion-text>{{ chamado.categoria }}</ion-text>
             </div>
           </div>
         </div>
