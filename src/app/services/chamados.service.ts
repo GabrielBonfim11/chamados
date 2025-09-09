@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, map, catchError, of } from 'rxjs';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, Firestore } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, Firestore, limit } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 
 export interface Comentario {
@@ -27,7 +27,7 @@ export interface Chamado {
   prioridade: string;
   status: 'aberto' | 'em_andamento' | 'concluido';
   solicitante: string;
-  numero?: Observable<number>;
+  numero?: number;
   local: string;
   contato?: string;
   comentarios?: Comentario[];
@@ -200,8 +200,7 @@ export class ChamadosService {
   }
 
   // Adicionar um novo chamado
-  adicionarChamado(chamado: Omit<Chamado, 'id' | 'numero'>): Observable<Chamado> {
-    console.log('Tentando adicionar chamado:', chamado);
+  async adicionarChamado(chamado: Omit<Chamado, 'id'>): Promise<Observable<Chamado>> {
     
     if (!this.db) {
       console.log('Firebase não disponível, salvando localmente');
@@ -213,16 +212,19 @@ export class ChamadosService {
       return of(chamadoLocal);
     }
 
-    var numeroChamado = this.gerarNumeroChamado();
-    
-    console.log('Salvando chamado no Firebase...');
-     console.log(numeroChamado);
+    await this.gerarNumeroChamado().then((numero => {
+      chamado.numero = numero;
+    }));
+
+    await this.atualizarNumeroChamado(chamado.numero).then(res => {
+          console.log('Número de chamado atualizado:', res);
+        });
+
     return from(addDoc(collection(this.db, this.chamadosCollectionName), chamado)).pipe(
       map(docRef => {
         console.log('Chamado salvo no Firebase com ID:', docRef.id);
         const novoChamado: Chamado = {
           ...chamado,
-          numero: this.gerarNumeroChamado(),
           id: docRef.id
         };
         return novoChamado;
@@ -297,20 +299,42 @@ export class ChamadosService {
       : 1;
   }
 
-  gerarNumeroChamado(): Observable<number> {
+  async gerarNumeroChamado(): Promise<number> {
     if(!this.db){
-      return of(0);
+      return 0;
     }
-    return from(getDoc(doc(this.db, this.numeroChamadosCollectionName, '1'))).pipe(
-      map(docSnap => {
-        if (docSnap.exists()) {
-          let numero = docSnap.data() as { numero: number }
-          console.log("AAAAAAAAAAAAAAAAAAAAA");
-          return numero.numero;
-        }
-        return 0;
-      })
-    );
+    const colRef = collection(this.db, 'numeroChamado');
+    const q = query(colRef, limit(1));
+    const snapshot = await getDocs(q);
+
+    if(!snapshot.empty){
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      const ultimoNumero = data['ultimo numero'];
+
+      return ultimoNumero + 1 || 0;
+    }else{
+      console.log('Nenhum número de chamado encontrado');
+      return 0;
+    }
+  }
+
+  private atualizarNumeroChamado(numero: number | undefined): Promise<void> {
+    console.log("ENTROU");
+    if(!this.db){
+      return Promise.resolve();
+    }
+    const colRef = collection(this.db, 'numeroChamado');
+    const q = query(colRef, limit(1));
+    return getDocs(q).then(snapshot => {
+      if(!snapshot.empty){
+        const doc = snapshot.docs[0];
+        updateDoc(doc.ref, {
+          'ultimo numero': numero ? numero : 0
+        })
+      }
+    })
+    
   }
   
   // Adicionar um comentário a um chamado existente

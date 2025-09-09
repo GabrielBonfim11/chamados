@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -33,11 +33,12 @@ import { Router } from '@angular/router';
     IonFabButton
   ]
 })
-export class ChamadosPage implements OnInit {
+export class ChamadosPage implements OnInit, OnDestroy {
   chamadosAbertos: Chamado[] = [];
   chamadosEmAndamento: Chamado[] = [];
   chamadosConcluidos: Chamado[] = [];
   selectedTab: string = 'abertos';
+  private subscriptions: any[] = [];
 
   constructor(private chamadosService: ChamadosService, private router: Router) {
     // Adiciona os ícones que serão usados
@@ -55,6 +56,10 @@ export class ChamadosPage implements OnInit {
   ngOnInit() {
     this.carregarChamados();
   }
+
+  ionViewWillEnter() {
+    this.carregarChamados();
+  }
   
   navegarParaDetalhes(id: string | number) {
     this.router.navigate(['/chamado-detalhes', id]);
@@ -66,17 +71,19 @@ export class ChamadosPage implements OnInit {
 
   // Carregar todos os chamados do serviço
   carregarChamados() {
-    this.chamadosService.getChamadosPorStatus('aberto').subscribe(chamados => {
+    const sub1 = this.chamadosService.getChamadosPorStatus('aberto').subscribe(chamados => {
       this.chamadosAbertos = chamados;
     });
 
-    this.chamadosService.getChamadosPorStatus('em_andamento').subscribe(chamados => {
+    const sub2 = this.chamadosService.getChamadosPorStatus('em_andamento').subscribe(chamados => {
       this.chamadosEmAndamento = chamados;
     });
 
-    this.chamadosService.getChamadosPorStatus('concluido').subscribe(chamados => {
+    const sub3 = this.chamadosService.getChamadosPorStatus('concluido').subscribe(chamados => {
       this.chamadosConcluidos = chamados;
     });
+
+    this.subscriptions.push(sub1, sub2, sub3);
   }
 
   // Métodos para obter chamados por status
@@ -109,5 +116,9 @@ export class ChamadosPage implements OnInit {
       default:
         return 'Chamados';
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
