@@ -19,11 +19,11 @@
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <ion-item>
-              <ion-label color="primary" position="floating">Usuário</ion-label>
-              <ion-input formControlName="username" type="text"></ion-input>
+              <ion-label color="primary" position="floating">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
             </ion-item>
-            <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-              Usuário é obrigatório
+            <div class="error-message" *ngIf="getFieldError('email')">
+              {{ getFieldError('email') }}
             </div>
           </div>
 
@@ -32,8 +32,8 @@
               <ion-label color="primary" position="floating">Senha</ion-label>
               <ion-input formControlName="password" type="password"></ion-input>
             </ion-item>
-            <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-              Senha é obrigatória
+            <div class="error-message" *ngIf="getFieldError('password')">
+              {{ getFieldError('password') }}
             </div>
           </div>
 
@@ -41,11 +41,27 @@
             <a href="#">Esqueceu a senha?</a>
           </div>
 
-          <ion-button expand="block" type="submit" class="login-button">
-            Entrar
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            class="login-button"
+            [disabled]="isLoading || !loginForm.valid">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">Entrar</span>
+            <span *ngIf="isLoading">Entrando...</span>
           </ion-button>
         </form>
       </ion-card>
     </div>
   </div>
+
+  <!-- Toast para mostrar erros -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="errorMessage"
+    duration="4000"
+    position="top"
+    color="danger"
+    (didDismiss)="closeToast()">
+  </ion-toast>
 </ion-content>

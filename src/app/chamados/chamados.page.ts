@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, IonTab, IonRouterOutlet, IonFab, IonFabButton, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { documentTextOutline, timeOutline, checkmarkDoneOutline, eyeOutline, addOutline, exitOutline, add } from 'ionicons/icons';
 import { ChamadosService, Chamado } from '../services/chamados.service';
+import { AuthService } from '../services/auth.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -30,7 +31,8 @@ import { Router } from '@angular/router';
     IonTab,
     IonRouterOutlet,
     IonFab,
-    IonFabButton
+    IonFabButton,
+    IonButton
   ]
 })
 export class ChamadosPage implements OnInit, OnDestroy {
@@ -40,7 +42,7 @@ export class ChamadosPage implements OnInit, OnDestroy {
   selectedTab: string = 'abertos';
   private subscriptions: any[] = [];
 
-  constructor(private chamadosService: ChamadosService, private router: Router) {
+  constructor(private chamadosService: ChamadosService, private authService: AuthService, private router: Router) {
     // Adiciona os ícones que serão usados
     addIcons({
       documentTextOutline,
@@ -116,6 +118,20 @@ export class ChamadosPage implements OnInit, OnDestroy {
       default:
         return 'Chamados';
     }
+  }
+
+  // Método para logout
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('Logout realizado com sucesso');
+      },
+      error: (error) => {
+        console.error('Erro no logout:', error);
+        // Mesmo com erro, redirecionar para login
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   ngOnDestroy(): void {

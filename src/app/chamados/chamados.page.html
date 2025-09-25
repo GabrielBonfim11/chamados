@@ -1,8 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="end">
-      <!-- <ion-back-button defaultHref="/login" text=""></ion-back-button> -->
-      <ion-icon name="exit-outline"></ion-icon>
+    <ion-buttons slot="start">
+      <ion-button (click)="logout()" fill="clear">
+        <ion-icon name="exit-outline" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title class="ion-text-center">{{ getTabTitle() }}</ion-title>
     <ion-buttons slot="end">
